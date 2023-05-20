@@ -1,5 +1,9 @@
 {
   "tasks": {
-    "dev": "deno run --watch main.ts"
+    "dev": "deno run --watch main.ts",
+    "run": "deno run --allow-net --allow-env main.ts"
+  },
+  "compilerOptions": {
+    "noImplicitAny": false
   }
 }
