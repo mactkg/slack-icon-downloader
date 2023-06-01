@@ -15,7 +15,7 @@ if(!ugname) {
 }
 
 const userGroupRepository = new UserGroupRepository(client);
-const usersRes = await userGroupRepository.getUserListByHandle(ugname) as any;
+const usersRes = await userGroupRepository.getUserListByHandle(ugname);
 if(!usersRes.ok) {
   console.error(`User group "${ugname}" is not found`)
   Deno.exit(1);
@@ -23,6 +23,12 @@ if(!usersRes.ok) {
 
 const userIds = usersRes.users
 const userRepository = new UserRepository(client);
+
+if(!userIds || userIds.length === 0) {
+  console.log(`User group "${ugname}" has no users`);
+  Deno.exit(1);
+}
+
 const users = await userRepository.getUsersById(userIds);
 users.forEach(user => {
   const url = user.profile.image_512;
