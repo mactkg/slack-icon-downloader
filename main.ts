@@ -1,8 +1,8 @@
 import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/mod.ts";
 import { SlackAPI } from "https://deno.land/x/deno_slack_api@2.1.0/mod.ts";
 import { UserGroupRepository } from "./repository/UserGroupRepository.ts";
-import { UserRepository } from "./repository/UserRepository.ts";
 import { ChannelRepository } from "./repository/ChannelRepository.ts";
+import { IconDownloadService } from "./service/IconDownloadService.ts";
 
 const SLACK_TOKEN = Deno.env.get("SLACK_TOKEN");
 if (!SLACK_TOKEN) {
@@ -31,22 +31,9 @@ const group = new Command()
       }
 
       const userIds = usersRes.users;
-      const userRepository = new UserRepository(client);
-      const users = await userRepository.getUsersById(userIds);
-      users.forEach((user) => {
-        const url = user.profile.image_512;
-
-        // Old Slack icon images are stored in Gravatar and converting size of the images may failed and fallback to the default image.
-        // So here remove default image param
-        // https://ja.gravatar.com/site/implement/images/#:~:text=low%2Dquality%20images.-,Default%20Image,-What%20happens%20when
-        if (url.includes("gravatar.com")) {
-          const gravatarUrl = new URL(url);
-          gravatarUrl.searchParams.delete("d");
-          console.log(gravatarUrl.toString());
-        } else {
-          console.log(url);
-        }
-      });
+      const iconService = new IconDownloadService(client);
+      const icons = await iconService.run(userIds);
+      icons.forEach(console.log);
     })();
   });
 
@@ -62,30 +49,15 @@ const channel = new Command()
       if (!usersRes.ok) {
         console.error(`Channel "${channelID}" is not found: ${usersRes.error}`);
         Deno.exit(1);
+      } else {
+        const iconService = new IconDownloadService(client);
+        const icons = await iconService.run(usersRes.members as string[]);
+        icons.forEach(console.log);
       }
-
-      const userRepository = new UserRepository(client);
-      const users = await userRepository.getUsersById(
-        usersRes.members as string[],
-      );
-      users.forEach((user) => {
-        const url = user.profile.image_512;
-
-        // Old Slack icon images are stored in Gravatar and converting size of the images may failed and fallback to the default image.
-        // So here remove default image param
-        // https://ja.gravatar.com/site/implement/images/#:~:text=low%2Dquality%20images.-,Default%20Image,-What%20happens%20when
-        if (url.includes("gravatar.com")) {
-          const gravatarUrl = new URL(url);
-          gravatarUrl.searchParams.delete("d");
-          console.log(gravatarUrl.toString());
-        } else {
-          console.log(url);
-        }
-      });
     })();
   });
 
-const cli = await new Command()
+const cli = new Command()
   .name("slack-icon-downloader")
   .description("Slack icon downloader")
   .version("v0.0.1")
