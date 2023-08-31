@@ -10,11 +10,6 @@ if (!SLACK_TOKEN) {
   Deno.exit(1);
 }
 const client = SlackAPI(SLACK_TOKEN);
-const ugname = Deno.args[0];
-if (!ugname) {
-  console.log("paramater should be defined");
-  Deno.exit(1);
-}
 
 const group = new Command()
   .arguments("<groupHandle:string>")
@@ -26,7 +21,7 @@ const group = new Command()
         groupHandle,
       ) as any;
       if (!usersRes.ok) {
-        console.error(`User group "${ugname}" is not found`);
+        console.error(`User group "${groupHandle}" is not found`);
         Deno.exit(1);
       }
 

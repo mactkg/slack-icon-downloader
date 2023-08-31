@@ -7,7 +7,6 @@ export class ChannelRepository {
     let cursor: string | undefined = undefined;
     const members: string[] = [];
     do {
-      console.log(`fetching... ${cursor}`);
       const res = await this.client.conversations.members({
         cursor,
         channel,
@@ -15,9 +14,7 @@ export class ChannelRepository {
       if (res.ok) {
         members.push(...res.members);
         cursor = res.response_metadata?.next_cursor;
-        console.log(res.next_cursor);
       } else {
-        console.error(res.error);
         return { ok: false, error: res.error };
       }
     } while (cursor);
