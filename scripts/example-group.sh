@@ -2,7 +2,7 @@
 ugs=(dev-team-alpha dev-team-bravo marketing)
 for ug in ${ugs[@]}
 do
-    deno task run $ug
+    deno task run group $ug
 done 
 
 touch results/list.csv
