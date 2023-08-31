@@ -2,7 +2,7 @@
 ugs=(dev-team-alpha dev-team-bravo marketing)
 for ug in ${ugs[@]}
 do
-    deno task run $ug | xargs -n 1 curl -L -O --create-dirs --output-dir results/$ug
+    deno task run $ug
 done 
 
 touch results/list.csv

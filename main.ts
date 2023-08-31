@@ -1,4 +1,5 @@
 import { Command } from "https://deno.land/x/cliffy@v1.0.0-rc.3/command/mod.ts";
+import { format } from "https://deno.land/std@0.200.0/datetime/mod.ts";
 import { SlackAPI } from "https://deno.land/x/deno_slack_api@2.1.0/mod.ts";
 import { UserGroupRepository } from "./repository/UserGroupRepository.ts";
 import { ChannelRepository } from "./repository/ChannelRepository.ts";
@@ -27,8 +28,10 @@ const group = new Command()
 
       const userIds = usersRes.users;
       const iconService = new IconDownloadService(client);
-      const icons = await iconService.run(userIds);
-      icons.forEach(console.log);
+      await iconService.run(
+        userIds,
+        `./results/${format(new Date(), "yyMMdd_HHmmss")}_${groupHandle}`,
+      );
     })();
   });
 
@@ -46,8 +49,10 @@ const channel = new Command()
         Deno.exit(1);
       } else {
         const iconService = new IconDownloadService(client);
-        const icons = await iconService.run(usersRes.members as string[]);
-        icons.forEach(console.log);
+        await iconService.run(
+          usersRes.members as string[],
+          `./results/${format(new Date(), "yyMMdd_HHmmss")}_${channelID}`,
+        );
       }
     })();
   });
