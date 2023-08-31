@@ -13,12 +13,18 @@
 
 ## Usage
 
+### with script
+
 - Copy `scripts/example.sh`
-  - Edit `ugs` array
+  - Edit `ugs` or `channels` array
 - Run script
   - Icons will be downloaded to `results` directory
   - You can use `results/list.csv` to load the icons from other apps(such like
     [ラベル屋さん](https://www.labelyasan.com/))
+
+### as cli
+
+- see `deno task run --help`
 
 ## LICENSE
 
