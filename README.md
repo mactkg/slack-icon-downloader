@@ -1,5 +1,15 @@
 # slack-icon-downloader
 
+## SYNOPSYS
+
+```bash
+# => icons of users in channel "C1ABCDEFG"(id) are downloaded to ./results/...
+$ deno run task main.ts channel C1ABCDEFG
+
+# => icons of user group "@dev-team-alpha" are downloaded to ./results/...
+$ deno run task main.ts group dev-team-alpha
+```
+
 ## Preparation
 
 - Pass slack token with permissions listed bellow to environment variable
@@ -24,7 +34,21 @@
 
 ### as cli
 
-- see `deno task run --help`
+```
+Description:
+
+  Slack icon downloader
+
+Options:
+
+  -h, --help     - Show this help.                            
+  -V, --version  - Show the version number for this program.  
+
+Commands:
+
+  group    <groupHandle>  - Download icons of users who are belong to the user groups.
+  channel  <channelID>    - Download icons of users who are joined in the channel.
+```
 
 ## LICENSE
 
