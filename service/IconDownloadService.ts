@@ -9,10 +9,15 @@ export class IconDownloadService {
   }
 
   async run(userIds: string[], directory: string) {
-    const users = await this.userRepository.getUsersById(userIds);
-    users.forEach(async (user) => {
-      const url = this.getDownloadableUrl(user.profile.image_512);
-      await this.download(url, directory);
+    const usersRes = await this.userRepository.getUsersById(userIds);
+    usersRes.forEach(async (userRes) => {
+      if (userRes.ok) {
+        const user = userRes.user;
+        const url = this.getDownloadableUrl(user.profile.image_512);
+        await this.download(url, directory);
+      } else {
+        console.log(userRes.error);
+      }
     });
   }
 
