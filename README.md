@@ -4,10 +4,10 @@
 
 ```bash
 # => icons of users in channel "C1ABCDEFG"(id) are downloaded to ./results/...
-$ deno run task main.ts channel C1ABCDEFG
+$ deno task run channel C1ABCDEFG
 
 # => icons of user group "@dev-team-alpha" are downloaded to ./results/...
-$ deno run task main.ts group dev-team-alpha
+$ deno task run group dev-team-alpha
 ```
 
 ## Preparation
