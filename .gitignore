@@ -1,3 +1,4 @@
 results
 scripts/*
 !scripts/example-*.sh
+build/
