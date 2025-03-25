@@ -41,6 +41,8 @@ jobs:
     steps:
       - name: Set up Deno
         uses: denolib/setup-deno@v2
+        with:
+          deno-version: v2.x
 
       - name: Check out repository
         uses: actions/checkout@v2
@@ -48,7 +50,7 @@ jobs:
           repository: mactkg/slack-icon-downloader
 
       - name: Build binary
-        run: deno compile --unstable --target=${{ matrix.target }} --output=build/slack-icon-downloader-${{ matrix.target }} main.ts
+        run: deno compile --target=${{ matrix.target }} --output=build/slack-icon-downloader-${{ matrix.target }} main.ts
 
       - name: Compress binary
         run: |
