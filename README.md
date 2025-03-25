@@ -8,6 +8,10 @@ $ deno run task main.ts channel C1ABCDEFG
 
 # => icons of user group "@dev-team-alpha" are downloaded to ./results/...
 $ deno run task main.ts group dev-team-alpha
+
+# => icons of user group "@dev-team-alpha" are downloaded to ./results/...
+#    and user informations are written in dev-team-alpha.csv(it may be useful when creating badges!) 
+$ deno run task main.ts group dev-team-alpha --csv=dev-team-alpha.csv
 ```
 
 ## Preparation

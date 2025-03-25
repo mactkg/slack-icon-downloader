@@ -1,5 +1,19 @@
-import { SlackAPIClient } from "https://deno.land/x/deno_slack_api@2.1.0/types.ts";
+import { SlackAPIClient } from "https://deno.land/x/deno_slack_api@2.8.0/types.ts";
 import { UserRepository } from "../repository/UserRepository.ts";
+
+type Result = {
+  id: string;
+  name: string;
+  real_name: string;
+};
+
+export type SuccessResult = Result & {
+  path: string;
+};
+
+export type ErrorResult = Result & {
+  message: string;
+};
 
 export class IconDownloadService {
   private userRepository: UserRepository;
@@ -8,17 +22,36 @@ export class IconDownloadService {
     this.userRepository = new UserRepository(client);
   }
 
-  async run(userIds: string[], directory: string) {
+  async run(userIds: string[], directory: string): Promise<[SuccessResult[], ErrorResult[]]>{
     const usersRes = await this.userRepository.getUsersById(userIds);
-    usersRes.forEach(async (userRes) => {
+    const result: SuccessResult[] = [];
+    const errors: ErrorResult[] = [];
+    for(const userRes of usersRes) {
       if (userRes.ok) {
         const user = userRes.user;
+        const { id, name, real_name } = user;
         const url = this.getDownloadableUrl(user.profile.image_512);
-        await this.download(url, directory);
+        const res = await this.download(url, directory);
+        if (res.ok) {
+          result.push({
+            id,
+            name,
+            real_name,
+            path: res.path,
+          });
+        } else {
+          errors.push({
+            id,
+            name,
+            real_name,
+            message: res.message,
+          });
+        }
       } else {
         console.log(userRes.error);
       }
-    });
+    }
+    return [result, errors]
   }
 
   private getDownloadableUrl(url: string) {
@@ -34,23 +67,27 @@ export class IconDownloadService {
     }
   }
 
-  private async download(rawUrl: string, path: string) {
+  private async download(
+    rawUrl: string,
+    path: string,
+  ): Promise<{ ok: true; path: string } | { ok: false; message: string }> {
     const url = new URL(rawUrl);
     const fileResponse = await fetch(url);
 
     const pathname = url.pathname;
     const filename = pathname.substring(pathname.lastIndexOf("/") + 1);
+    const filepath = `${path}/${filename}`;
 
     await Deno.mkdir(path, { recursive: true });
     if (fileResponse.body) {
-      const file = await Deno.open(`${path}/${filename}`, {
+      const file = await Deno.open(filepath, {
         write: true,
         create: true,
       });
       await fileResponse.body.pipeTo(file.writable);
-      return;
+      return { ok: true, path: await Deno.realPath(filepath) };
     } else {
-      return fileResponse.text();
+      return { ok: false, message: await fileResponse.text() };
     }
   }
 }
