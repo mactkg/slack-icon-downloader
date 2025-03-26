@@ -101,7 +101,7 @@ const channel = new Command()
 const cli = new Command()
   .name("slack-icon-downloader")
   .description("Slack icon downloader")
-  .version("v0.2.0")
+  .version("v0.2.1")
   .action(function () {
     // set defualt command
     this.showHelp();
