@@ -102,6 +102,10 @@ const cli = new Command()
   .name("slack-icon-downloader")
   .description("Slack icon downloader")
   .version("v0.2.0")
+  .action(function () {
+    // set defualt command
+    this.showHelp();
+  })
   .command("group", group)
   .command("channel", channel);
 await cli.parse();
